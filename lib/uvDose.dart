@@ -32,7 +32,7 @@ class _uvDoseState extends State<uvDose> {
   List<UVDoseData> _uvDoseDatalist = [UVDoseData(null, null)];
   int start_minsec, cnt = 0;
   double sum_dose = 0, xAxis = 30;
-  String time_start = '0';
+  String time_start = '0', dose_J = 'mJ/㎠', power_W = 'mW/㎠';
   var start_time, stop_time = ' ';
   static GlobalKey previewContainer = new GlobalKey();
   List<List<dynamic>> rows = List<List<dynamic>>();
@@ -204,12 +204,27 @@ class _uvDoseState extends State<uvDose> {
                                   }
 
                                   sum_dose += double.parse(currentValue);
+
+                                  if(sum_dose > 1000 && dose_J == 'mJ/㎠'){
+                                    sum_dose = sum_dose / 1000;
+                                    dose_J = 'J/㎠';
+                                  }
+                                  if(sum_dose > 1000 && dose_J == 'J/㎠'){
+                                    sum_dose = sum_dose / 1000;
+                                    dose_J = 'kJ/㎠';
+                                  }
+                                  if(sum_dose > 1000 && dose_J == 'kJ/㎠'){
+                                    sum_dose = sum_dose / 1000;
+                                    dose_J = 'MJ/㎠';
+                                  }
+
                                   if (sum_dose.toString().length > 6) {
                                     sum_dose = double.parse(sum_dose.toString().substring(0, 6));
                                     dose_list.add(sum_dose.toString());
                                   }
                                   else
                                     dose_list.add(sum_dose.toString());
+
 
                                   String datetime = DateTime.now().toString().split('.')[0];
                                   datetime_list.add(datetime);
@@ -239,7 +254,7 @@ class _uvDoseState extends State<uvDose> {
                                     int temp = cur_minsec - start_minsec;
                                     acc_sec = temp % 60;
                                     acc_min = temp ~/ 60;
-                                    xAxis_val = '${acc_min}min ${acc_sec}sec';
+                                    xAxis_val = '${acc_min}m ${acc_sec}s';
                                     min_flag = true;
                                   }
                                   print('start_minsec: $start_minsec');
@@ -248,6 +263,20 @@ class _uvDoseState extends State<uvDose> {
                                   _uvDoseDatalist.add(
                                     UVDoseData(xAxis_val, double.tryParse(currentValue) ?? 0)
                                   );
+
+                                  double currentValue2 = double.parse(currentValue);
+                                  if(currentValue2 > 1000 && power_W == 'mJ/㎠'){
+                                    currentValue2 = currentValue2 / 1000;
+                                    power_W = 'W/㎠';
+                                  }
+                                  if(currentValue2 > 1000 && power_W == 'W/㎠'){
+                                    currentValue2 = currentValue2 / 1000;
+                                    power_W = 'kW/㎠';
+                                  }
+                                  if(currentValue2 > 1000 && power_W == 'kW/㎠'){
+                                    currentValue2 = currentValue2 / 1000;
+                                    power_W = 'MW/㎠';
+                                  }
 
                                   return Column(
                                     children: <Widget>[
@@ -294,7 +323,7 @@ class _uvDoseState extends State<uvDose> {
                                               Expanded(
                                                   flex: 1,
                                                   child: Center(
-                                                      child: Text('${currentValue}mW/㎠')))
+                                                      child: Text('$currentValue2$power_W')))
                                             ],
                                           ),
                                           SizedBox(height: 10),
@@ -355,7 +384,7 @@ class _uvDoseState extends State<uvDose> {
                                               Expanded(
                                                   flex: 1,
                                                   child: Center(
-                                                      child: Text('${sum_dose}mJ/㎠')))
+                                                      child: Text('$sum_dose$dose_J')))
                                             ],
                                           ),
                                         ],

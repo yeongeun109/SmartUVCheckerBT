@@ -232,6 +232,7 @@ class _uvcSafeState extends State<uvcSafe> {
       child: RepaintBoundary(
         key: previewContainer,
         child: Scaffold(
+            resizeToAvoidBottomInset : false,
             appBar: AppBar(
               automaticallyImplyLeading: false,
               title: Row(
