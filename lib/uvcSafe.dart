@@ -73,29 +73,30 @@ class _uvcSafeState extends State<uvcSafe> {
     return bio_effective_irradiation[bei_table_index];
   }
 
-  static const uvc_safe_01seconds = 13; // 0.1 second
-  static const uvc_safe_05seconds = 12; // 0.5 second
-  static const uvc_safe_1seconds = 11; // 1 second
-  static const uvc_safe_10seconds = 10;
-  static const uvc_safe_30seconds = 9;
-  static const uvc_safe_1minutes = 8;
-  static const uvc_safe_5minutes = 7;
-  static const uvc_safe_10minutes = 6;
-  static const uvc_safe_15minutes = 5;
-  static const uvc_safe_30minutes = 4;
-  static const uvc_safe_1hours = 3;
-  static const uvc_safe_2hours = 2;
-  static const uvc_safe_4hours = 1;
-  static const uvc_safe_8hours = 0;
+  static const uvc_safe_01seconds = 14; // 0.1 second
+  static const uvc_safe_05seconds = 13; // 0.5 second
+  static const uvc_safe_1seconds = 12; // 1 second
+  static const uvc_safe_10seconds = 11;
+  static const uvc_safe_30seconds = 10;
+  static const uvc_safe_1minutes = 9;
+  static const uvc_safe_5minutes = 8;
+  static const uvc_safe_10minutes = 7;
+  static const uvc_safe_15minutes = 6;
+  static const uvc_safe_30minutes = 5;
+  static const uvc_safe_1hours = 4;
+  static const uvc_safe_2hours = 3;
+  static const uvc_safe_4hours = 2;
+  static const uvc_safe_8hours = 1;
+  static const uvc_safe_24hours = 0;
 
   final List<double> exposure_and_irradiation = [
-    0.0001, 0.0002, 0.0004, 0.0008, 0.0017, 0.0033, 0.005, 0.01, 0.05, 0.1, 0.3, 3, 6, 10
+    0, 0.0001, 0.0002, 0.0004, 0.0008, 0.0017, 0.0033, 0.005, 0.01, 0.05, 0.1, 0.3, 3, 6, 10
   ];
 
   int get_exposure_duration(double irradiation) {
     if(irradiation != 0){
-      for (var i = uvc_safe_8hours; i <= uvc_safe_01seconds; i++) {
-        if (irradiation <= exposure_and_irradiation[i]) return (i);
+      for (var i = uvc_safe_24hours; i <= uvc_safe_01seconds; i++) {
+        if (irradiation <= exposure_and_irradiation[i+1] && irradiation > exposure_and_irradiation[i]) return (i);
       }
     }
     else
@@ -104,17 +105,17 @@ class _uvcSafeState extends State<uvcSafe> {
   }
 
   List<String> uvc_safe_image = [
-    'uvc_safe_level_white_01_n.png',
-    'uvc_safe_level_white_02_n.png',
-    'uvc_safe_level_white_03_n.png',
-    'uvc_safe_level_white_04_n.png',
-    'uvc_safe_level_white_05_n.png',
-    'uvc_safe_level_white_06_n.png',
-    'uvc_safe_level_white_07_n.png',
-    'uvc_safe_level_white_08_n.png',
-    'uvc_safe_level_white_09_n.png',
-    'uvc_safe_level_white_10_n.png', // no 15 min in picture
-    'uvc_safe_level_white_11_n.png',
+    'uvc_safe_level_white_01_n.png', // 24hours
+    'uvc_safe_level_white_02_n.png', // 8hours
+    'uvc_safe_level_white_03_n.png', // 4hours
+    'uvc_safe_level_white_04_n.png', // 2hours
+    'uvc_safe_level_white_05_n.png', // 1hours
+    'uvc_safe_level_white_06_n.png', // 30min
+    'uvc_safe_level_white_07_n.png', // 10min
+    'uvc_safe_level_white_08_n.png', // 5min
+    'uvc_safe_level_white_09_n.png', // 2min
+    'uvc_safe_level_white_10_n.png', // 1min
+    'uvc_safe_level_white_11_n.png', // 1min
     'uvc_safe_level_white_11_n.png',
     'uvc_safe_level_white_11_n.png',
     'uvc_safe_level_white_11_n.png',
@@ -133,6 +134,14 @@ class _uvcSafeState extends State<uvcSafe> {
     super.initState();
     checkConnectedDevices();
     isReady = false;
+    getPermission();
+  }
+
+  getPermission() async{
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+    print(statuses[Permission.storage]);
   }
 
   checkConnectedDevices() async {
@@ -357,7 +366,11 @@ class _uvcSafeState extends State<uvcSafe> {
                                 bio_irradiation_list.add(bio_irradiation);
 
                                 int i = get_exposure_duration(irradiation);
-                                String imagepath = 'images/' + get_display_image_file(i);
+                                String imagepath;
+                                if(i != 0)
+                                  imagepath = 'images/' + get_display_image_file(i);
+                                else
+                                  imagepath = 'images/uvc_safe_level_white_00_n';
 
                                 return Column(
                                   children: <Widget>[
@@ -505,10 +518,11 @@ class _uvcSafeState extends State<uvcSafe> {
       row.add(bio_irradiation_list[i]);
       rows.add(row);
     }
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-    ].request();
-    String datetime = DateTime.now().toString().split('.')[0];
+
+    String temp = DateTime.now().toString().split('.')[0];
+    List<String> date = temp.split(' ')[0].split('-');
+    List<String> time = temp.split(' ')[1].split(':');
+    String datetime = '${date[0]}${date[1]}${date[2]}${time[0]}${time[1]}${time[2]}';
     File f = new File('/storage/emulated/0/Download/UVC_Safe$datetime.csv');
 
     String csv = const ListToCsvConverter().convert(rows);
@@ -517,22 +531,19 @@ class _uvcSafeState extends State<uvcSafe> {
   }
 
   Future<String> takeScreenShot() async {
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-    ].request();
-    print(statuses[Permission.storage]);
-
     RenderRepaintBoundary boundary = previewContainer.currentContext.findRenderObject();
     ui.Image image = await boundary.toImage();
 
-    //final directory = (await getExternalStorageDirectory()).absolute.path + '';
-    //print(directory);
     ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData.buffer.asUint8List();
     print(pngBytes);
 
-    String datetime = DateTime.now().toString().split('.')[0];
-    File imgFile = new File('/storage/emulated/0/Pictures/UVC_Safe$datetime.png');
+    String temp = DateTime.now().toString().split('.')[0];
+    List<String> date = temp.split(' ')[0].split('-');
+    List<String> time = temp.split(' ')[1].split(':');
+    String datetime = '${date[0]}${date[1]}${date[2]}${time[0]}${time[1]}${time[2]}';
+
+    File imgFile = new File('/storage/emulated/0/Pictures/UV_Intensity$datetime.png');
     imgFile.writeAsBytes(pngBytes);
 
     return ('/storage/emulated/0/Pictures');

@@ -52,6 +52,14 @@ class _uvIntensityState extends State<uvIntensity> {
     super.initState();
     checkConnectedDevices();
     isReady = false;
+    getPermission();
+  }
+
+  getPermission() async{
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+    print(statuses[Permission.storage]);
   }
 
   checkConnectedDevices() async {
@@ -431,10 +439,11 @@ class _uvIntensityState extends State<uvIntensity> {
       row.add(avg_list[i]);rows.add(row);
     }
 
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-    ].request();
-    String datetime = DateTime.now().toString().split('.')[0];
+    String temp = DateTime.now().toString().split('.')[0];
+    List<String> date = temp.split(' ')[0].split('-');
+    List<String> time = temp.split(' ')[1].split(':');
+    String datetime = '${date[0]}${date[1]}${date[2]}${time[0]}${time[1]}${time[2]}';
+    print(datetime);
     File f = new File('/storage/emulated/0/Download/UV_Intensity$datetime.csv');
 
     String csv = const ListToCsvConverter().convert(rows);
@@ -443,11 +452,6 @@ class _uvIntensityState extends State<uvIntensity> {
   }
 
   Future<String> takeScreenShot() async {
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-    ].request();
-    print(statuses[Permission.storage]);
-
     RenderRepaintBoundary boundary = previewContainer.currentContext.findRenderObject();
     ui.Image image = await boundary.toImage();
 
@@ -455,7 +459,11 @@ class _uvIntensityState extends State<uvIntensity> {
     Uint8List pngBytes = byteData.buffer.asUint8List();
     print(pngBytes);
 
-    String datetime = DateTime.now().toString().split('.')[0];
+    String temp = DateTime.now().toString().split('.')[0];
+    List<String> date = temp.split(' ')[0].split('-');
+    List<String> time = temp.split(' ')[1].split(':');
+    String datetime = '${date[0]}${date[1]}${date[2]}${time[0]}${time[1]}${time[2]}';
+
     File imgFile = new File('/storage/emulated/0/Pictures/UV_Intensity$datetime.png');
     imgFile.writeAsBytes(pngBytes);
 

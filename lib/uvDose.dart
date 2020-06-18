@@ -33,7 +33,7 @@ class _uvDoseState extends State<uvDose> {
   int start_minsec, cnt = 0;
   double sum_dose = 0, xAxis = 30;
   String time_start = '0', dose_J = 'mJ/㎠', power_W = 'mW/㎠';
-  var start_time, stop_time = ' ';
+  var start_time, end_time = ' ';
   static GlobalKey previewContainer = new GlobalKey();
   List<List<dynamic>> rows = List<List<dynamic>>();
   List<String> powerVal_list = [' UV Power(mW/cm²)'];
@@ -46,8 +46,16 @@ class _uvDoseState extends State<uvDose> {
     super.initState();
     checkConnectedDevices();
     isReady = false;
+    getPermission();
   }
 
+
+  getPermission() async{
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+    print(statuses[Permission.storage]);
+  }
   checkConnectedDevices() async {
     var connectedDevices = await FlutterBlue.instance.connectedDevices;
     print(connectedDevices);
@@ -140,36 +148,36 @@ class _uvDoseState extends State<uvDose> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: RepaintBoundary(
-        key: previewContainer,
-        child: Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Image(
-                    image: AssetImage('images/genuv_logo_small_white.png'),
-                    width: 100,
-                  ),
-                  SizedBox(width: 30),
-                  Expanded(flex: 1, child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text('UV Dose'),
-                    ],
-                  )),
-                ],
-              ),
-              backgroundColor: Color(0xFFef7f11),
+      child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image(
+                  image: AssetImage('images/genuv_logo_small_white.png'),
+                  width: 100,
+                ),
+                SizedBox(width: 30),
+                Expanded(flex: 1, child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text('UV Dose'),
+                  ],
+                )),
+              ],
             ),
-            body: Container(
-                padding: EdgeInsets.symmetric(horizontal: 25),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Column(
+            backgroundColor: Color(0xFFef7f11),
+          ),
+          body: Container(
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RepaintBoundary(
+                      key: previewContainer,
+                      child: Column(
                         children: <Widget>[
                           Container(
                               child: Row(
@@ -230,6 +238,11 @@ class _uvDoseState extends State<uvDose> {
                                   datetime_list.add(datetime);
                                   print(datetime_list);
 
+                                  end_time = DateTime.now()
+                                      .toString()
+                                      .split(' ')[1]
+                                      .split('.')[0];
+
                                   var cur_time = DateTime.now().toString().split(' ')[1].split('.')[0];
                                   int cur_min = int.parse(cur_time.split(':')[1]);
                                   int cur_sec = int.parse(cur_time.split(':')[2]);
@@ -261,7 +274,7 @@ class _uvDoseState extends State<uvDose> {
                                   print('xAxis_val : $xAxis_val');
 
                                   _uvDoseDatalist.add(
-                                    UVDoseData(xAxis_val, double.tryParse(currentValue) ?? 0)
+                                      UVDoseData(xAxis_val, double.tryParse(currentValue) ?? 0)
                                   );
 
                                   double currentValue2 = double.parse(currentValue);
@@ -281,24 +294,24 @@ class _uvDoseState extends State<uvDose> {
                                   return Column(
                                     children: <Widget>[
                                       Container(
-                                        width: (MediaQuery.of(context).size.width).toDouble(),
-                                        height: (MediaQuery.of(context).size.height ~/ 2) > 300 ? 300 : (MediaQuery.of(context).size.height ~/ 2).toDouble(),
-                                        child: SfCartesianChart(
+                                          width: (MediaQuery.of(context).size.width).toDouble(),
+                                          height: (MediaQuery.of(context).size.height ~/ 2) > 300 ? 300 : (MediaQuery.of(context).size.height ~/ 2).toDouble(),
+                                          child: SfCartesianChart(
                                             //legend: Legend(isVisible: false, opacity: 0.7),
                                             //title: ChartTitle(text: ''),
                                             primaryXAxis: CategoryAxis(
-                                              visibleMaximum: xAxis
+                                                visibleMaximum: xAxis
                                             ),
                                             series: <AreaSeries<UVDoseData, String>>[
                                               AreaSeries<UVDoseData, String>(
-                                                dataSource: _uvDoseDatalist,
-                                                opacity: 0.7,
-                                                name: 'UV Power',
-                                                xValueMapper: (UVDoseData sales, _) => sales.second,
-                                                yValueMapper: (UVDoseData sales, _) => sales.adc_val,
-                                                color: Color(0xFFFF9C25),
-                                                borderWidth: 3,
-                                                borderColor: Color(0xFFef7f11)
+                                                  dataSource: _uvDoseDatalist,
+                                                  opacity: 0.7,
+                                                  name: 'UV Power',
+                                                  xValueMapper: (UVDoseData sales, _) => sales.second,
+                                                  yValueMapper: (UVDoseData sales, _) => sales.adc_val,
+                                                  color: Color(0xFFFF9C25),
+                                                  borderWidth: 3,
+                                                  borderColor: Color(0xFFef7f11)
                                               ),
                                             ],
                                             tooltipBehavior: TooltipBehavior(enable: true),
@@ -343,7 +356,7 @@ class _uvDoseState extends State<uvDose> {
                                                   flex: 1,
                                                   child: Center(
                                                       child: Text(
-                                                          '$start_time~$stop_time')))
+                                                          '$start_time~$end_time')))
                                             ],
                                           ),
                                           SizedBox(height: 10),
@@ -362,8 +375,8 @@ class _uvDoseState extends State<uvDose> {
                                                   flex: 1,
                                                   child: Center(
                                                       child: !min_flag
-                                                        ? Text('${xAxis_val}sec')
-                                                        : Text(xAxis_val)
+                                                          ? Text('${xAxis_val}sec')
+                                                          : Text(xAxis_val)
                                                   )
                                               )
                                             ],
@@ -399,134 +412,127 @@ class _uvDoseState extends State<uvDose> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          _isbuttonStart
-                              ? RaisedButton(
-                            child: Text(
-                              'START',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15),
-                            ),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(7),
-                                side: BorderSide(
-                                    color: Color(0x335f3206), width: 2)),
-                            onPressed: () {
-                              connectToDevice();
-                              connectionFlag = true;
-                              start_time = DateTime.now().toString().split(' ')[1].split('.')[0];
-                              int start_min = int.parse(start_time.split(':')[1]);
-                              int start_sec = int.parse(start_time.split(':')[2]);
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        _isbuttonStart
+                            ? RaisedButton(
+                          child: Text(
+                            'START',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15),
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              side: BorderSide(
+                                  color: Color(0x335f3206), width: 2)),
+                          onPressed: () {
+                            connectToDevice();
+                            connectionFlag = true;
+                            start_time = DateTime.now().toString().split(' ')[1].split('.')[0];
+                            int start_min = int.parse(start_time.split(':')[1]);
+                            int start_sec = int.parse(start_time.split(':')[2]);
 
-                              if (start_min == 00)
-                                start_minsec = start_sec;
-                              else
-                                start_minsec = start_min * 60 + start_sec;
-                              print('start: $start_minsec');
-                              setState(() {
-                                _isbuttonStart = false;
-                                _uvDoseDatalist = [UVDoseData(null, null)];
-                                datetime_list = [];
-                                powerVal_list = [];
-                                dose_list = [];
-                                stop_time = '0';
-                                cnt = 0;
-                                xAxis = 30;
-                              });
-                            },
-                            color: Color(0xFFef7f11),
-                          )
-                              : RaisedButton(
-                            child: Text(
-                              'STOP',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15),
-                            ),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(7),
-                                side: BorderSide(
-                                    color: Color(0x335f3206), width: 2)),
-                            onPressed: () {
-                              disconnectFromDevice();
-                              connectionFlag = false;
-                              stop_time = DateTime.now()
-                                  .toString()
-                                  .split(' ')[1]
-                                  .split('.')[0];
-                              setState(() {
-                                _isbuttonStart = true;
-                              });
-                            },
-                            color: Color(0xFFef7f11),
+                            if (start_min == 00)
+                              start_minsec = start_sec;
+                            else
+                              start_minsec = start_min * 60 + start_sec;
+                            print('start: $start_minsec');
+                            setState(() {
+                              _isbuttonStart = false;
+                              _uvDoseDatalist = [UVDoseData(null, null)];
+                              datetime_list = [];
+                              powerVal_list = [];
+                              dose_list = [];
+                              end_time = '0';
+                              cnt = 0;
+                              xAxis = 30;
+                            });
+                          },
+                          color: Color(0xFFef7f11),
+                        )
+                            : RaisedButton(
+                          child: Text(
+                            'STOP',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15),
                           ),
-                          RaisedButton(
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                            ),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(7),
-                                side: BorderSide(
-                                    color: Color(0x335f3206), width: 2)),
-                            onPressed: () async {
-                              String ans = await takeScreenShot();
-                              Fluttertoast.showToast(
-                                msg: '$ans에 저장되었습니다.',
-                                toastLength: Toast.LENGTH_SHORT,
-                              );
-                            },
-                            color: Color(0xFFef7f11),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              side: BorderSide(
+                                  color: Color(0x335f3206), width: 2)),
+                          onPressed: () {
+                            disconnectFromDevice();
+                            connectionFlag = false;
+
+                            setState(() {
+                              _isbuttonStart = true;
+                            });
+                          },
+                          color: Color(0xFFef7f11),
+                        ),
+                        RaisedButton(
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
                           ),
-                          RaisedButton(
-                            child: Icon(
-                              Icons.save,
-                              color: Colors.white,
-                            ),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(7),
-                                side: BorderSide(
-                                    color: Color(0x335f3206), width: 2)),
-                            onPressed: () async{
-                              String ans = await getCsv();
-                              Fluttertoast.showToast(
-                                msg: '$ans에 저장되었습니다.',
-                                toastLength: Toast.LENGTH_SHORT,
-                              );
-                            },
-                            color: Color(0xFFef7f11),
-                          )
-                        ],
-                      )
-                    ]))),
-      ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              side: BorderSide(
+                                  color: Color(0x335f3206), width: 2)),
+                          onPressed: () async {
+                            String ans = await takeScreenShot();
+                            Fluttertoast.showToast(
+                              msg: '$ans에 저장되었습니다.',
+                              toastLength: Toast.LENGTH_SHORT,
+                            );
+                          },
+                          color: Color(0xFFef7f11),
+                        ),
+                        RaisedButton(
+                          child: Icon(
+                            Icons.save,
+                            color: Colors.white,
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              side: BorderSide(
+                                  color: Color(0x335f3206), width: 2)),
+                          onPressed: () async{
+                            String ans = await getCsv();
+                            Fluttertoast.showToast(
+                              msg: '$ans에 저장되었습니다.',
+                              toastLength: Toast.LENGTH_SHORT,
+                            );
+                          },
+                          color: Color(0xFFef7f11),
+                        )
+                      ],
+                    )
+                  ]))),
     );
   }
 
   Future<String> takeScreenShot() async {
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-    ].request();
-    print(statuses[Permission.storage]);
-
     RenderRepaintBoundary boundary = previewContainer.currentContext.findRenderObject();
     ui.Image image = await boundary.toImage();
 
-    //final directory = (await getExternalStorageDirectory()).absolute.path + '';
-    //print(directory);
+    String temp = DateTime.now().toString().split('.')[0];
+    List<String> date = temp.split(' ')[0].split('-');
+    List<String> time = temp.split(' ')[1].split(':');
+    String datetime = '${date[0]}${date[1]}${date[2]}${time[0]}${time[1]}${time[2]}';
+
     ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData.buffer.asUint8List();
-    print(pngBytes);
 
-    String datetime = DateTime.now().toString().split('.')[0];
     File imgFile = new File('/storage/emulated/0/Pictures/UV_Dose$datetime.png');
     imgFile.writeAsBytes(pngBytes);
 
@@ -534,7 +540,6 @@ class _uvDoseState extends State<uvDose> {
   }
 
   Future<String> getCsv() async {
-
     for (int i = 0; i < powerVal_list.length; i++) {
       List<dynamic> row = List();
       row.add(datetime_list[i]);
@@ -544,11 +549,11 @@ class _uvDoseState extends State<uvDose> {
 
       rows.add(row);
     }
+    String temp = DateTime.now().toString().split('.')[0];
+    List<String> date = temp.split(' ')[0].split('-');
+    List<String> time = temp.split(' ')[1].split(':');
+    String datetime = '${date[0]}${date[1]}${date[2]}${time[0]}${time[1]}${time[2]}';
 
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-    ].request();
-    String datetime = DateTime.now().toString().split('.')[0];
     File f = new File('/storage/emulated/0/Download/UV_Dose$datetime.csv');
 
     String csv = const ListToCsvConverter().convert(rows);

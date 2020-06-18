@@ -200,20 +200,6 @@ class _NavigationState extends State<Navigation> {
                                 side: BorderSide(
                                     color: Color(0x335f3206), width: 2)),
                             onPressed: () {
-                              /*if (band == '0') {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => AlertDialog(
-                                          content: Text('스위치 Setting을 확인해주세요.'),
-                                          actions: <Widget>[
-                                            FlatButton(
-                                                onPressed: () => Navigator.of(context).pop(false),
-                                                child: new Text('확인')),
-                                          ],
-                                        )));
-                              }
-                              else{*/
                               if(isReady == true && band != '0') {
                                 Navigator.push(
                                     context,
@@ -237,7 +223,7 @@ class _NavigationState extends State<Navigation> {
                                             actions: <Widget>[
                                               FlatButton(
                                                   onPressed: () => Navigator.of(context).pop(false),
-                                                  child: new Text('확인')),
+                                                  child: new Text('close')),
                                             ],
                                           )));
                                 }
@@ -250,7 +236,7 @@ class _NavigationState extends State<Navigation> {
                                             actions: <Widget>[
                                               FlatButton(
                                                   onPressed: () => Navigator.of(context).pop(false),
-                                                  child: new Text('확인')),
+                                                  child: new Text('close')),
                                             ],
                                           )));
                                 }
@@ -298,7 +284,7 @@ class _NavigationState extends State<Navigation> {
                                             actions: <Widget>[
                                               FlatButton(
                                                   onPressed: () => Navigator.of(context).pop(false),
-                                                  child: new Text('확인')),
+                                                  child: new Text('close')),
                                             ],
                                           )));
                                 }
@@ -311,7 +297,7 @@ class _NavigationState extends State<Navigation> {
                                             actions: <Widget>[
                                               FlatButton(
                                                   onPressed: () => Navigator.of(context).pop(false),
-                                                  child: new Text('확인')),
+                                                  child: new Text('close')),
                                             ],
                                           )));
                                 }
@@ -355,7 +341,7 @@ class _NavigationState extends State<Navigation> {
                                             actions: <Widget>[
                                               FlatButton(
                                                   onPressed: () => Navigator.of(context).pop(false),
-                                                  child: new Text('확인')),
+                                                  child: new Text('close')),
                                             ],
                                           )));
                                 }
@@ -368,7 +354,7 @@ class _NavigationState extends State<Navigation> {
                                             actions: <Widget>[
                                               FlatButton(
                                                   onPressed: () => Navigator.of(context).pop(false),
-                                                  child: new Text('확인')),
+                                                  child: new Text('close')),
                                             ],
                                           )));
                                 }
@@ -411,7 +397,7 @@ class _NavigationState extends State<Navigation> {
                                             actions: <Widget>[
                                               FlatButton(
                                                   onPressed: () => Navigator.of(context).pop(false),
-                                                  child: new Text('확인')),
+                                                  child: new Text('close')),
                                             ],
                                           )));
                                 }
@@ -424,7 +410,7 @@ class _NavigationState extends State<Navigation> {
                                             actions: <Widget>[
                                               FlatButton(
                                                   onPressed: () => Navigator.of(context).pop(false),
-                                                  child: new Text('확인')),
+                                                  child: new Text('close')),
                                             ],
                                           )));
                                 }
