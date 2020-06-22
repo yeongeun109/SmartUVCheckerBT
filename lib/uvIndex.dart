@@ -35,12 +35,6 @@ class _uvIndexState extends State<uvIndex> {
   final int green = 0xFF77AE38, yellow = 0xFFECAC1D, orange = 0xFFE3811E,
     red = 0xFFD3422A, purple = 0xFF9F5A8F;
 
-  PageController controller = PageController(
-    initialPage: 1,
-    keepPage: true,
-  );
-
-
   @override
   void initState() {
     super.initState();
@@ -160,8 +154,10 @@ class _uvIndexState extends State<uvIndex> {
     return result;
   }
 
-  final List<double> pin_angle = [
-    0, 10.5, 26.5, 42, 57, 73, 90, 106, 122, 137, 153, 169, 180
+  final List<String> index_graph = [
+    'uv_index_graph_0.png', 'uv_index_graph_1.png', 'uv_index_graph_2.png', 'uv_index_graph_3.png', 'uv_index_graph_4.png',
+    'uv_index_graph_5.png', 'uv_index_graph_6.png', 'uv_index_graph_7.png', 'uv_index_graph_8.png', 'uv_index_graph_9.png',
+    'uv_index_graph_10.png', 'uv_index_graph_11.png'
   ];
 
   final List<String> phrases = [
@@ -173,7 +169,7 @@ class _uvIndexState extends State<uvIndex> {
         '& sun protective clothing.'
   ];
 
-  int get_pin_index(String currentValue){
+  int get_index(String currentValue){
     if(currentValue != '11+'){
       return int.parse(currentValue);
     }
@@ -223,8 +219,6 @@ class _uvIndexState extends State<uvIndex> {
                       builder: (BuildContext context,
                           AsyncSnapshot<List<int>> snapshot) {
                         if (snapshot.hasError)
-
-
                           return Text('Error: ${snapshot.error}');
 
                         if ((snapshot.connectionState == ConnectionState.active) &&
@@ -236,7 +230,7 @@ class _uvIndexState extends State<uvIndex> {
                           datetime_list.add(datetime);
                           print(datetime_list);
 
-                          int pin_index = get_pin_index(currentValue);
+                          int graph_index = get_index(currentValue);
                           int phrase_index = 0;
                           int textcolor = green;
 
@@ -273,22 +267,9 @@ class _uvIndexState extends State<uvIndex> {
 
                           return Column(
                             children: <Widget>[
-                              Stack(
-                                children: <Widget>[
-                                  Image(
-                                    image: AssetImage('images/uv_index_graph.png'),
-                                  ),
-                                  Positioned(
-                                    right: 102,//(MediaQuery.of(context).size.width ~/ 2).toDouble() ,
-                                    bottom: 0.0,
-                                    child: RotationTransition(
-                                      turns: AlwaysStoppedAnimation(pin_angle[pin_index] / 360),
-                                      child: Image(
-                                        image: AssetImage('images/uv_index_pin.png'),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              Image(
+                                image: AssetImage('images/' + index_graph[graph_index]),
+                                gaplessPlayback: true,
                               ),
                               SizedBox(height: 20),
                               Text(

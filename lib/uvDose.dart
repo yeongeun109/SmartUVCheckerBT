@@ -302,6 +302,11 @@ class _uvDoseState extends State<uvDose> {
                                             primaryXAxis: CategoryAxis(
                                                 visibleMaximum: xAxis
                                             ),
+                                            primaryYAxis: NumericAxis(
+                                              title: AxisTitle(
+                                                text: power_W
+                                              )
+                                            ),
                                             series: <AreaSeries<UVDoseData, String>>[
                                               AreaSeries<UVDoseData, String>(
                                                   dataSource: _uvDoseDatalist,
@@ -581,6 +586,11 @@ class _defalutWidget extends StatelessWidget {
             height: (MediaQuery.of(context).size.height ~/ 2) > 300 ? 300 : (MediaQuery.of(context).size.height ~/ 2).toDouble(),
             child: SfCartesianChart(
                 primaryXAxis: CategoryAxis(),
+                primaryYAxis: NumericAxis(
+                  title: AxisTitle(
+                    text: 'mW/㎠'
+                  )
+                ),
                 series: <LineSeries<UVDoseData, String>>[
                   LineSeries<UVDoseData, String>(
                       dataSource: _uvDoseDatalist,
