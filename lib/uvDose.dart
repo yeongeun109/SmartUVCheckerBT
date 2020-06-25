@@ -262,7 +262,7 @@ class _uvDoseState extends State<uvDose> {
                                   bool min_flag = false;
 
                                   if(cur_minsec - start_minsec <= 60)
-                                    xAxis_val = '${cur_minsec - start_minsec}';
+                                    xAxis_val = '${cur_minsec - start_minsec}s';
                                   else {
                                     int temp = cur_minsec - start_minsec;
                                     acc_sec = temp % 60;
