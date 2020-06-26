@@ -457,22 +457,9 @@ class _defaultWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Stack(
-          children: <Widget>[
-            Image(
-              image: AssetImage('images/uv_index_graph.png'),
-            ),
-            Positioned(
-              left: 90,
-              bottom: 0.0,
-              child: RotationTransition(
-                turns: AlwaysStoppedAnimation(-0.5 / 360),
-                child: Image(
-                  image: AssetImage('images/uv_index_pin.png'),
-                ),
-              ),
-            ),
-          ],
+        Image(
+          image: AssetImage('images/uv_index_graph_0.png'),
+          gaplessPlayback: true,
         ),
         SizedBox(height: 20),
         Text(

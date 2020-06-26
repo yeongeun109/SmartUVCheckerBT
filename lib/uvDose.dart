@@ -380,7 +380,7 @@ class _uvDoseState extends State<uvDose> {
                                                   flex: 1,
                                                   child: Center(
                                                       child: !min_flag
-                                                          ? Text('${xAxis_val}sec')
+                                                          ? Text(xAxis_val)
                                                           : Text(xAxis_val)
                                                   )
                                               )

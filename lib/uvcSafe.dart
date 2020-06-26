@@ -370,7 +370,7 @@ class _uvcSafeState extends State<uvcSafe> {
                                 if(i != 0)
                                   imagepath = 'images/' + get_display_image_file(i);
                                 else
-                                  imagepath = 'images/uvc_safe_level_white_00_n';
+                                  imagepath = 'images/uvc_safe_level_white_00_n.png';
 
                                 return Column(
                                   children: <Widget>[
