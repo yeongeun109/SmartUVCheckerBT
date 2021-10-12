@@ -44,9 +44,10 @@
 <div float="left">
 <img src="https://user-images.githubusercontent.com/62532878/136947994-ff40fc59-48d6-4f73-9a99-a211b62a40fb.png" alt="메인화면" height="600"/>
 <img src="https://user-images.githubusercontent.com/62532878/136947997-4e13fca0-130f-4528-81ba-058b372e7b2e.png" alt="블루투스미연결시" height="600"/>
-<img src="https://user-images.githubusercontent.com/62532878/136947998-f3a0cde7-30ce-48a6-874b-1062d632e727.png" alt="메인화면" height="600"/>
+
 </div>
 <div float="left">
+  <img src="https://user-images.githubusercontent.com/62532878/136947998-f3a0cde7-30ce-48a6-874b-1062d632e727.png" alt="메인화면" height="600"/>
 <img src="https://user-images.githubusercontent.com/62532878/136948000-c9788181-ba24-46c6-81da-fafed4254038.PNG" alt="블루투스미연결시" height="300"/>
 </div>
 
